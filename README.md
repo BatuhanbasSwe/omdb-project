@@ -11,6 +11,7 @@ Modern, responsive bir Single Page Application: OMDB API üzerinden film, dizi v
 ## İçindekiler
 
 - [Hızlı Bakış](#hızlı-bakış)
+- [Gereksinim Karşılama Matrisi](#gereksinim-karşılama-matrisi)
 - [Özellikler](#özellikler)
 - [Teknolojiler](#teknolojiler)
 - [Proje Yapısı](#proje-yapısı)
@@ -33,6 +34,40 @@ Modern, responsive bir Single Page Application: OMDB API üzerinden film, dizi v
 | API | [OMDB API](https://www.omdbapi.com) |
 | Hosting | GitHub Pages |
 | Persistans | LocalStorage + URL params |
+
+---
+
+## Gereksinim Karşılama Matrisi
+
+Orijinal proje README'sindeki her madde, projede şu şekilde karşılanıyor:
+
+### Functional Requirements
+
+| # | Spec maddesi | Durum | Nerede karşılanıyor |
+|---|---|---|---|
+| 1 | **Movie Search Input** — search box + button | Karşılandı | [`index.html`](index.html#L102-L120) `<form data-search-form>` + Enter / submit butonu |
+| 1.bonus | Sahibinden tarzı zengin filtreler | Karşılandı | Tür / Yıl / Sıralama segmentleri + 11 tür chip'i ([`index.html`](index.html#L122-L167)) |
+| 2 | **Display Movie Details** — Title, Year, Genre, Director, Poster | Karşılandı | Detay modal'ında tam künye ([`src/ui/modal.js`](src/ui/modal.js)); kart görünümünde Title/Year/Poster + IMDb puanı ([`src/ui/card.js`](src/ui/card.js)) |
+| 3 | **Error Handling** — net hata mesajı | Karşılandı | "Sonuç yok", boş arama uyarısı, network hatası ([`src/ui/results.js`](src/ui/results.js) — `showEmpty`, `showError`) |
+| 4 | **Multiple Searches** — refresh olmadan ardışık arama | Karşılandı | Form `preventDefault` + state-driven render ([`src/main.js`](src/main.js)) |
+| 4 | Refresh sonrası son arama korunur | Karşılandı | URL params + LocalStorage ([`src/url.js`](src/url.js), [`src/storage.js`](src/storage.js)) |
+| 5 | **Backend Proxy** | Opsiyonel — yapılmadı | Spec'te explicit olarak opsiyonel; bu proje saf SPA, [API Key Hakkında](#api-key-hakkında) bölümünde gerekçe |
+
+### Non-Functional Requirements
+
+| # | Spec maddesi | Durum | Nerede karşılanıyor |
+|---|---|---|---|
+| 1 | **Performance** — efficient API, no duplicate requests | Karşılandı | `Map<key, Promise>` cache + `AbortController` ([`src/api.js`](src/api.js)). Aynı sorgu iki kez atılmaz. |
+| 2 | **Usability** — simple, intuitive | Karşılandı | Modern minimal UI, klavye kısayolu (`/`), skeleton loader, animasyonlar, ARIA attribute'ları |
+| 3 | **Portability** — cross-browser + responsive | Karşılandı | Modern evergreen browser'lar (Chrome/Edge/Firefox/Safari); 360 / 768 / 1280 px breakpoint'leri ([`styles/main.css`](styles/main.css#L249) → [`styles/components.css`](styles/components.css)) |
+| 4 | **Maintainability** — modular, well-documented | Karşılandı | ES Modules ile katmanlı: `api`, `state`, `storage`, `url`, `ui/*`. Tek sorumluluk, açık isimlendirme. Bu README mimari kararları belgeliyor. |
+
+### Deliverables
+
+| Madde | URL |
+|---|---|
+| Public GitHub repository | https://github.com/BatuhanbasSwe/omdb-project |
+| GitHub Pages deployment | https://batuhanbasswe.github.io/omdb-project/ |
 
 ---
 
