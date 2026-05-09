@@ -1,86 +1,270 @@
-# OMDB Movie Search Project
+# CineScope — OMDB Movie Search
 
-## How to Set Up Your Repository
+Modern, responsive bir Single Page Application: OMDB API üzerinden film, dizi ve bölüm araması; favoriler, filtreler, detay modalı, tema desteği ile.
 
-**WARNING**: This is a template project. Do not fork this repository.
+**Canlı Demo:** https://batuhanbasswe.github.io/omdb-project/
 
-Please follow the visual steps below to create and set up the project repository on your own GitHub profile.
-
-1. Click the **"Use this template"** button at the top right of this page.
-
-<img width="1920" height="1080" alt="Use this template example" src="https://github.com/user-attachments/assets/137c0f6c-bc6c-4584-8752-02c067051438" />
-<br><br>
-
-2. Select **"Create a new repository"** to generate your own public repository for this task.
-
-<img width="1920" height="1080" alt="Create a new repository" src="https://github.com/user-attachments/assets/87b9032e-6e10-4679-88bb-c42a98894edf" />
-<br><br>
-
-3. Name your repository as **"omdb-project"** and click the **"Create repository"** button.
-
-<img width="1920" height="1080" alt="Create repository" src="https://github.com/user-attachments/assets/dd808d69-6ade-4903-8f77-831b643dbdff" />
-<br><br>
-
-Upload all of your solutions to `github.com/yourusername/omdb-project`.
+**Repo:** https://github.com/BatuhanbasSwe/omdb-project
 
 ---
 
-## Overview
+## İçindekiler
 
-This project is designed to evaluate your coding skills in web development. You are required to build a simple web application that consumes the [OMDB API](http://www.omdbapi.com/).
-
-* The application must be a fully responsive **Single Page Application (SPA)** and should display movie details such as **title, year, genre, director, and poster**.
-* The application must be written using **HTML, CSS, and JavaScript**.
-* If your project meets all the requirements, you may extend it with additional functionalities.
-* After development, you must deploy the project using [GitHub Pages](https://pages.github.com). **Projects that are not deployed to GitHub Pages will not be evaluated and will receive 0 points.**
-
-You must **create your own repository using this template** and upload your work there. 
-Do **not** attempt to push changes directly to this repository or any of its original branches.
-
----
-
-## Functional Requirements
-
-1. **Movie Search Input**
-   - Users must be able to enter a movie name and trigger a search.
-   - A search box and button are sufficient, but adding well-composed UI elements (e.g., filters similar to sahibinden.com) will earn bonus points.
-
-2. **Display Movie Details**
-   - Show at least: Title, Year, Genre, Director, and Poster image.
-   - The design is up to you.
-
-3. **Error Handling**
-   - If the movie is not found or the API returns an error, display a clear message to the user.
-   - Unhandled errors will result in point deductions.
-
-4. **Multiple Searches**
-   - Users should be able to perform multiple searches without refreshing the page.
-   - If the page is refreshed, the last search view should be retained (e.g., using LocalStorage or URL parameters).
-
-5. **Backend Proxy (Optional)**
-   - If you implement a backend, it should handle API requests and return clean JSON to the frontend.
+- [Hızlı Bakış](#hızlı-bakış)
+- [Özellikler](#özellikler)
+- [Teknolojiler](#teknolojiler)
+- [Proje Yapısı](#proje-yapısı)
+- [Lokal Çalıştırma](#lokal-çalıştırma)
+- [Kullanılan OMDB Endpoint'leri](#kullanılan-omdb-endpointleri)
+- [Mimari Kararlar](#mimari-kararlar)
+- [API Key Hakkında](#api-key-hakkında)
+- [Bilinen Sınırlamalar](#bilinen-sınırlamalar)
+- [Tarayıcı Desteği](#tarayıcı-desteği)
 
 ---
 
-## Non-Functional Requirements
+## Hızlı Bakış
 
-1. **Performance**
-   - API calls should be efficient. Avoid unnecessary repeated requests.
-
-2. **Usability**
-   - The interface should be simple, intuitive, and user-friendly.
-   - The design is up to you.
-
-3. **Portability**
-   - The application should work across modern browsers and be responsive for different screen sizes.
-
-4. **Maintainability**
-   - Code should be modular, well-documented, and easy to extend.
+| Konu | Detay |
+|---|---|
+| Stack | Vanilla HTML5 + CSS3 + JavaScript (ES Modules) |
+| Build aracı | Yok — `index.html`'i aç çalışsın |
+| Bağımlılık | Sıfır npm paketi |
+| API | [OMDB API](https://www.omdbapi.com) |
+| Hosting | GitHub Pages |
+| Persistans | LocalStorage + URL params |
 
 ---
 
-## Deliverables & Submission
+## Özellikler
 
-Once you have completed the project, ensure you have the following ready:
-- A **public GitHub repository** containing your project code (created via the template).
-- A **hosted version** of the project deployed on GitHub Pages.
+### Zorunlu Gereksinimler (README spec'inden)
+
+- **Arama** — Form ile kelime tabanlı arama; Enter veya buton ile submit; ardışık aramalar sayfa yenilenmeden çalışır
+- **Detay alanları** — Title, Year, Genre, Director, Plot, Cast, Runtime, IMDb Rating, Awards, Poster (modal'da tam künye)
+- **Hata yönetimi** — "Sonuç yok", "Boş arama", "Network hatası" mesajları kullanıcıya net şekilde gösterilir
+- **State persistans** — Sayfa F5 yenilense bile son arama, sayfa, filtre ve sonuçlar URL params + LocalStorage üzerinden geri yüklenir
+
+### Bonus Özellikler
+
+#### Arama deneyimi
+- **Filtre paneli** — İçerik türü (film / dizi / bölüm), yıl, sıralama (alaka / yıl / başlık)
+- **Tür chip'leri** — Aksiyon, Macera, Komedi, Dram, Gerilim, Korku, Bilim Kurgu, Romantik, Animasyon, Suç, Fantastik
+- **Sayfalama** — Önceki / Sonraki butonları, mevcut sayfa göstergesi
+- **Klavye kısayolu** — `/` tuşu aramaya focus
+- **Temizle butonu** — Input'a girilen yazıyı X ile sıfırla
+
+#### Keşfet sekmesi
+- **Top 250 Film** — IMDb klasikleri ve modern hitler (240+ başlık, IMDb puanına göre azalan sıralı)
+- **Top 250 Dizi** — Breaking Bad, The Wire, Sopranos vb. dahil 95+ dizi
+- **Son Çıkanlar** — Oppenheimer, Dune Part Two, Wicked vb. yakın dönem çıkışlar
+- **Daha Fazla Yükle** — 20'lik batch'ler halinde lazy load
+- **Tür filtresi** — Keşfet sayfasında da chip filtreleri
+- **Otomatik kalite filtresi** — IMDb puanı 7.0 altı içerikler curated listelerden elenir
+
+#### Favoriler & Tema
+- **Favoriler** — Karttaki yıldız ile ekle/çıkar; ayrı sekmede listele; LocalStorage'da kalıcı
+- **Light / Dark tema** — Header'daki ikondan toggle; tercih kalıcı
+- **Sayaç badge** — Favoriler tab'ında canlı sayı
+
+#### Detay modalı
+- Karta tıklayınca yandan slide ile açılır
+- Büyük poster, başlık, yıl, tür, yönetmen, oyuncular, plot, IMDb / Rotten Tomatoes / Metacritic puanları, ödüller
+- ESC tuşu, X butonu veya overlay tıklamasıyla kapanır
+- Body scroll lock
+
+#### Görsel cila
+- Glassmorphism (cam efekti) header ve filtre çubuğu
+- Background gradient + film grain
+- Poster animasyonları, fade-in kart geçişleri
+- Skeleton shimmer (yükleme sırasında)
+- `prefers-reduced-motion` desteği
+
+### Performans & Mimari Çözümler
+
+- **In-memory cache** — `Map<key, Promise>` ile aynı OMDB sorgusu iki kez atılmaz
+- **AbortController** — Kullanıcı yeni arama yaparken eski fetch iptal edilir
+- **URL ↔ State sync** — Arama parametreleri URL'de tutulur (paylaşılabilir / yer imine eklenebilir)
+- **Lazy poster loading** — `loading="lazy"` attribute ile poster'lar görünür olunca yüklenir
+- **GPU-friendly animasyonlar** — Sadece `transform` ve `opacity` üzerinden
+
+---
+
+## Teknolojiler
+
+| Katman | Seçim | Notlar |
+|---|---|---|
+| Markup | HTML5 | Semantik tag'ler, ARIA attribute'ları |
+| Stil | CSS3 | Custom properties (tema), Flexbox, Grid, `backdrop-filter` |
+| Mantık | JavaScript (ES2022) | ES Modules, async/await, AbortController |
+| Veri | OMDB API | Search + ID detay endpoint'leri |
+| Persistans | LocalStorage + URL params | Hibrit hidrasyon |
+| Tipografi | Inter + JetBrains Mono | Google Fonts |
+| Hosting | GitHub Pages | `main` branch / root |
+
+**Framework yok, build aracı yok, npm dependency yok.**
+
+---
+
+## Proje Yapısı
+
+```
+omdb-project/
+├── index.html              Semantik iskelet: header, hero, search, modal, footer
+├── README.md               Bu dosya
+├── assets/
+│   ├── icons/logo.svg
+│   └── placeholder.svg     Poster yoksa fallback
+├── styles/
+│   ├── main.css            CSS değişkenleri (tema), layout, responsive
+│   ├── components.css      Card, modal, button, filter, skeleton, badge
+│   └── animations.css      Fade-in, shimmer, modal transition
+└── src/
+    ├── main.js             Giriş noktası, orkestrasyon, event binding
+    ├── api.js              OMDB fetch sarmalayıcı, cache, AbortController
+    ├── config.js           API key, base URL, page size, storage keys
+    ├── storage.js          LocalStorage adaptörü (favoriler, tema, son arama)
+    ├── url.js              URL query params ↔ state
+    ├── utils.js            debounce, escapeHtml, $/$$ DOM helpers
+    ├── top250.js           Keşfet için curated IMDb ID listeleri
+    └── ui/
+        ├── card.js         Tek film/dizi kartı render
+        ├── modal.js        Detay paneli (yandan slide)
+        ├── results.js      Grid render, pagination, empty/error states
+        └── icons.js        SVG ikon constants (heart, search, star, vb.)
+```
+
+---
+
+## Lokal Çalıştırma
+
+Build aşaması yok. İki seçenek:
+
+### 1. Tarayıcıda direkt aç (en hızlı)
+
+`index.html`'e çift tıkla. ES modules `file://` protokolünde Chrome'da CORS uyarısı verir → bu yüzden local sunucu önerilir.
+
+### 2. Local HTTP sunucu (önerilen)
+
+```bash
+# Python (tüm sistemlerde varsayılan kuruludur)
+python -m http.server 8080
+
+# Node.js varsa
+npx serve .
+
+# VSCode kullanıyorsanız: "Live Server" eklentisini kurun, index.html'e sağ tık → Open with Live Server
+```
+
+Sonra tarayıcıda: `http://localhost:8080`
+
+---
+
+## Kullanılan OMDB Endpoint'leri
+
+```
+GET https://www.omdbapi.com/?apikey=KEY&s=QUERY&type=TYPE&y=YEAR&page=N
+```
+Liste araması — sayfa başı 10 sonuç döner. Yanıt: `Search[]`, `totalResults`, `Response`.
+
+```
+GET https://www.omdbapi.com/?apikey=KEY&i=IMDB_ID&plot=full
+```
+Tek başlık detayı — Title, Year, Genre, Director, Actors, Plot, Runtime, Ratings, Awards, Poster, vb.
+
+Hata durumlarında OMDB `Response: "False"` + `Error` mesajı döner; bu mesaj kullanıcıya gösterilir.
+
+---
+
+## Mimari Kararlar
+
+### Genre & Director neden kart yerine modal'da?
+
+OMDB'nin `?s=` (search) endpoint'i yalnızca `Title`, `Year`, `Type`, `Poster`, `imdbID` döner. Genre ve Director için her başlık için ayrı bir `?i=` (detay) çağrısı gerekir. Bu durumda 10 kartlık bir sonuç sayfası 11 OMDB isteği yapar (1 search + 10 detay) ki bu free tier'ın 1000 istek/gün limitini hızla tüketir.
+
+**Çözüm:**
+- Kart görünümünde: Title, Year, Poster + (arka planda enrich edilen) IMDb rating, Runtime
+- Detay modalında: Title, Year, **Genre, Director**, Plot, Cast, Ratings, Awards, Runtime, Poster (büyük)
+
+### Keşfet için neden manuel ID listesi?
+
+OMDB'de "IMDb Top 250" gibi bir endpoint yok — sadece arama ve detay var. Keşfet sekmesi için [`src/top250.js`](src/top250.js) dosyasında manuel IMDb ID listeleri tutulur:
+
+- `TOP_MOVIES` — 240+ klasik ve modern film
+- `TOP_SERIES` — 95+ dizi
+- `NEW_RELEASES` — Yakın dönem (2023–2024) çıkışlar
+
+İçerik IMDb puanına göre azalan sıralı render edilir. IMDb puanı 7.0 altı başlıklar curated listelerden filtrelenir (Son Çıkanlar hariç — puanı henüz oturmamış olabilir).
+
+### State yönetimi
+
+Merkezi tek bir `state` objesi ([`src/main.js`](src/main.js#L20)):
+
+```js
+const state = {
+  view: 'search',                         // home | search | favorites
+  homeCategory: 'movies',                 // movies | series | new
+  query: '', type: '', year: '', sort: '',
+  genre: '', homeGenre: '',
+  page: 1,
+  loading: false,
+  favorites: [],
+  theme: 'dark',
+  ...
+};
+```
+
+Pub/sub framework yok. View'lar event-driven render edilir. URL ve LocalStorage state ile iki yönlü senkronize.
+
+### Performans
+
+- **Cache:** [`src/api.js`](src/api.js) içinde `Map<key, Promise>` — aynı parametreli istek tekrar atılmaz
+- **AbortController:** Yeni arama yapılırken eski fetch iptal edilir → race condition yok
+- **Skeleton:** İlk yüklemede shimmer kart'ları, kullanıcıya hız hissi
+- **CSS animations:** Sadece `transform` + `opacity` üzerinden, GPU'da
+
+---
+
+## API Key Hakkında
+
+API key [`src/config.js`](src/config.js) içinde **frontend'de açık** tutulmaktadır.
+
+**Gerekçe:**
+- OMDB free tier zaten public anahtarlara dayalı (anahtar URL'de görünür)
+- Bu proje **tamamen client-side bir SPA** — backend proxy eklemek staj görevinin kapsamını gereksiz büyütürdü
+- README spec'i Backend Proxy'yi **opsiyonel** olarak işaretlemiş
+
+**Anahtarı değiştirmek için:** [`src/config.js`](src/config.js) dosyasındaki `OMDB_API_KEY` değişkenini güncelleyin.
+
+Production'da: API key'i bir backend proxy üzerinden saklamak best practice'tir.
+
+---
+
+## Bilinen Sınırlamalar
+
+- OMDB `?s=` endpoint'i Genre/Director döndürmediği için kart görünümünde bu alanlar yok (modal'da tam künye var)
+- IMDb'nin gerçek Top 250 sıralaması Bayesian ortalama kullanır; biz ham `imdbRating`'e göre sıralıyoruz, ufak sapmalar olabilir
+- Son Çıkanlar manuel listeyle besleniyor — otomatik güncellenmiyor
+- OMDB free tier 1000 istek/gün ile sınırlı; cache + AbortController bunu en aza indiriyor ama yoğun kullanımda limit aşılabilir
+
+---
+
+## Tarayıcı Desteği
+
+Modern evergreen tarayıcılar:
+
+- Chrome / Edge 90+
+- Firefox 90+
+- Safari 14+
+
+Kullanılan modern özellikler: ES Modules, `backdrop-filter`, CSS Grid, custom properties, `AbortController`. IE 11 desteklenmez.
+
+---
+
+## Lisans
+
+Bu proje bir staj başvurusu görev çalışmasıdır.
+
+---
+
+Geliştirici: [@BatuhanbasSwe](https://github.com/BatuhanbasSwe)
