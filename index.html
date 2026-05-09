@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="OMDB API ile film ve dizi arama" />
+  <title>CineScope · OMDB Movie Search</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/components.css" />
+  <link rel="stylesheet" href="styles/animations.css" />
+</head>
+<body>
+  <div class="bg-fx" aria-hidden="true"></div>
+  <div class="bg-grain" aria-hidden="true"></div>
+
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3" width="19" height="18" rx="2.5"/><path d="M7 3v18M17 3v18M2.5 8h4.5M2.5 16h4.5M17 8h4.5M17 16h4.5M7 12h10"/></svg>
+        </div>
+        <div class="brand-stack">
+          <div class="brand-name">cine<em>scope</em></div>
+          <div class="brand-tag">OMDB · v1.0</div>
+        </div>
+      </div>
+
+      <div class="tabs" role="tablist" aria-label="Görünüm">
+        <button class="tab" data-view="home" role="tab" aria-selected="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span class="label">Keşfet</span>
+        </button>
+        <button class="tab is-active" data-view="search" role="tab" aria-selected="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <span class="label">Arama</span>
+        </button>
+        <button class="tab" data-view="favorites" role="tab" aria-selected="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span class="label">Favoriler</span>
+          <span class="badge is-empty" data-favorites-count aria-live="polite">0</span>
+        </button>
+      </div>
+
+      <button class="icon-btn" data-theme-toggle aria-label="Tema değiştir">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Anasayfa hero -->
+  <section class="hero" data-view-section="home" hidden>
+    <div class="hero-eyebrow">
+      <span class="dot"></span>
+      <span>IMDb · En yüksek puanlı başlıklar</span>
+    </div>
+    <h1>Sinema <em>dünyasını</em> keşfet.</h1>
+    <p>IMDb Top 250'den seçme filmler, diziler ve vizyondaki yeni çıkışlar.</p>
+    <div class="home-tabs">
+      <button class="home-tab is-active" data-home-cat="movies">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        Top 250 Film
+      </button>
+      <button class="home-tab" data-home-cat="series">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="2.5" y="3" width="19" height="18" rx="2.5"/><path d="M7 3v18M17 3v18M2.5 8h4.5M2.5 16h4.5M17 8h4.5M17 16h4.5"/></svg>
+        Top 250 Dizi
+      </button>
+      <button class="home-tab" data-home-cat="new">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Son Çıkanlar
+      </button>
+    </div>
+    
+    <div class="genre-filter" data-home-genre-filter aria-label="Tür filtresi" style="margin-top: 24px;">
+      <button class="genre-chip is-on" data-genre="">Tümü</button>
+      <button class="genre-chip" data-genre="Action">Aksiyon</button>
+      <button class="genre-chip" data-genre="Adventure">Macera</button>
+      <button class="genre-chip" data-genre="Comedy">Komedi</button>
+      <button class="genre-chip" data-genre="Drama">Dram</button>
+      <button class="genre-chip" data-genre="Thriller">Gerilim</button>
+      <button class="genre-chip" data-genre="Horror">Korku</button>
+      <button class="genre-chip" data-genre="Sci-Fi">Bilim Kurgu</button>
+      <button class="genre-chip" data-genre="Romance">Romantik</button>
+      <button class="genre-chip" data-genre="Animation">Animasyon</button>
+      <button class="genre-chip" data-genre="Crime">Suç</button>
+      <button class="genre-chip" data-genre="Fantasy">Fantastik</button>
+    </div>
+  </section>
+
+  <!-- Arama görünümü hero -->
+  <section class="hero" data-view-section="search">
+    <div class="hero-eyebrow">
+      <span class="dot"></span>
+      <span>OMDB destekli · 380k+ başlık</span>
+    </div>
+    <h1>Aradığın film, <em>bulundu</em>.</h1>
+    <p>Film, dizi ve bölümler arasında ara. Favorileri sabitle, yıla göre filtrele, istediğin şekilde sırala.</p>
+
+    <div class="search-wrap">
+      <form class="search" data-search-form role="search" aria-label="Film ara">
+        <svg class="search-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input
+          type="text"
+          data-search-input
+          placeholder="Film, dizi veya bölüm ara…"
+          autocomplete="off"
+          aria-label="Arama sorgusu"
+          spellcheck="false"
+        />
+        <button type="button" class="clear" data-search-clear aria-label="Temizle" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+        <button type="submit" class="go">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+          Ara
+        </button>
+      </form>
+
+      <div class="filters">
+        <div class="filter">
+          <span class="filter-label">Tür</span>
+          <div class="filter-segment" data-filter-type role="group" aria-label="İçerik türü">
+            <button data-type-val="" class="is-on">tümü</button>
+            <button data-type-val="movie">film</button>
+            <button data-type-val="series">dizi</button>
+            <button data-type-val="episode">bölüm</button>
+          </div>
+        </div>
+        <div class="filter">
+          <span class="filter-label">Yıl</span>
+          <input
+            class="year-input"
+            data-filter-year
+            type="number"
+            placeholder="Herhangi"
+            min="1888"
+            max="2099"
+            aria-label="Yıl filtresi"
+          />
+        </div>
+        <div class="filter">
+          <span class="filter-label">Sıralama</span>
+          <select class="sort-select" data-filter-sort aria-label="Sıralama">
+            <option value="relevance">Alaka</option>
+            <option value="year-desc">Yıl (yeni → eski)</option>
+            <option value="title-asc">Başlık (A → Z)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="genre-filter" data-genre-filter aria-label="Tür filtresi">
+        <button class="genre-chip is-on" data-genre="">Tümü</button>
+        <button class="genre-chip" data-genre="Action">Aksiyon</button>
+        <button class="genre-chip" data-genre="Adventure">Macera</button>
+        <button class="genre-chip" data-genre="Comedy">Komedi</button>
+        <button class="genre-chip" data-genre="Drama">Dram</button>
+        <button class="genre-chip" data-genre="Thriller">Gerilim</button>
+        <button class="genre-chip" data-genre="Horror">Korku</button>
+        <button class="genre-chip" data-genre="Sci-Fi">Bilim Kurgu</button>
+        <button class="genre-chip" data-genre="Romance">Romantik</button>
+        <button class="genre-chip" data-genre="Animation">Animasyon</button>
+        <button class="genre-chip" data-genre="Crime">Suç</button>
+        <button class="genre-chip" data-genre="Fantasy">Fantastik</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Favoriler görünümü hero -->
+  <section class="hero hero-fav" data-view-section="favorites" hidden>
+    <div class="hero-eyebrow">
+      <span class="dot"></span>
+      <span>Koleksiyonun</span>
+    </div>
+    <h1>Sakladığın <em>filmler</em>.</h1>
+    <p>Yıldızladığın her şey burada yaşıyor — uzun hafta sonu maratonu için kısa listeni oluşturmaya devam et.</p>
+  </section>
+
+  <main class="results" id="results" aria-live="polite" aria-busy="false">
+    <div class="results-meta" data-results-meta hidden>
+      <h2 data-results-title></h2>
+      <span class="count" data-results-count></span>
+    </div>
+
+    <div data-results-status role="status"></div>
+
+    <!-- Home / Keşfet view -->
+    <div data-home-section hidden>
+      <div class="home-cat-header">
+        <h2 class="home-cat-title" data-home-cat-title>Top 250 Film</h2>
+        <span class="home-cat-count" data-home-count></span>
+      </div>
+      <div class="grid" data-home-grid></div>
+      <div class="load-more-wrap" data-load-more-wrap hidden>
+        <button class="pg-btn load-more-btn" data-home-load-more>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+          Daha Fazla Yükle
+        </button>
+      </div>
+    </div>
+
+    <div class="grid" data-results-grid></div>
+    <div class="grid" data-favorites-grid hidden></div>
+
+    <nav class="pagination" data-pagination hidden aria-label="Sayfalama">
+      <button class="pg-btn" data-page-prev>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Önceki
+      </button>
+      <div class="pg-status" data-page-info></div>
+      <button class="pg-btn" data-page-next>
+        Sonraki
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </nav>
+  </main>
+
+  <!-- Detail modal -->
+  <div class="scrim" data-modal hidden role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal" data-modal-card>
+      <button class="modal-close" data-modal-close aria-label="Kapat (ESC)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+      <div class="modal-poster" data-modal-poster></div>
+      <div class="modal-body" data-modal-body></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    Powered by <span class="accent">OMDB API</span> · Vanilla HTML / CSS / JS · <kbd>/</kbd> ile ara
+  </footer>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
